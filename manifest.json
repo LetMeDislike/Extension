@@ -1,0 +1,45 @@
+{
+  "name": "LetMeDislike",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "This extension was made in response to the change YouTube made: Removing all dislikes.",
+  "homepage_url": "https://github.com/LetMeDislike",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png",
+    "250": "icons/icon250.png"
+  },
+  "default_locale": "en",
+  "background": {
+    "scripts": [
+      "src/bg/background.js"
+    ],
+    "persistent": true
+  },
+  "options_page": "src/options_custom/index.html",
+  "permissions": [
+    "contextMenus",
+    "https://youtube.com/"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "css": [
+        "src/inject/inject.css",
+        "src/inject/material-components-web.min.css"
+      ]
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "src/inject/inject.js",
+        "src/inject/material-components-web.min.js"
+      ]
+    }
+  ]
+}
