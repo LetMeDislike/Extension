@@ -14,6 +14,11 @@ if(isOnWatchPage()) {
 	const id = getVideoId();
 
 	window.addEventListener("load", () => {
+		while (document.querySelector('#top-level-buttons-computed') === null) {
+			// wait a bit.
+		}
+
+		// here we can run our code.
 		const dislikeButton = document.createElement("button");
 		dislikeButton.append(document.createElement("span"));
 		dislikeButton.append(document.createElement("i"));
