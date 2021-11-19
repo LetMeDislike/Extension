@@ -57,9 +57,8 @@ if(isOnWatchPage()) {
 
 			fetch(`https://let-me-dislike-server.herokuapp.com/dislikes?id=${id}`).then(response => response.json()).then((response) => {
 				if (response.status === 200) {
-					fetch(response.url).then(response => response.json()).then((response) => {
+					fetch(response.url).then(response => response.json()).then((dislikeData) => {
 						try {
-							const dislikeData = JSON.parse(this.responseText);
 							dislikeButton.querySelector("p").innerText = dislikeData.display;
 						} catch (err) {
 							dislikeButton.querySelector("p").innerText = "Failed to load.";
