@@ -14,53 +14,67 @@ if(isOnWatchPage()) {
 	const id = getVideoId();
 
 	window.addEventListener("load", () => {
-		while (document.querySelector('#top-level-buttons-computed') === null) {
-			// wait a bit.
-		}
-
-		// here we can run our code.
-		const dislikeButton = document.createElement("button");
-		dislikeButton.append(document.createElement("span"));
-		dislikeButton.append(document.createElement("i"));
-		dislikeButton.append(document.createElement("p"));
-
-		dislikeButton.querySelector("i").innerText = "thumb_down";
-
-		dislikeButton.className = "mdc-button";
-		dislikeButton.querySelector("span").className = "mdc-button__ripple";
-		dislikeButton.querySelector("p").className = "mdc-button__label";
-		dislikeButton.querySelector("i").className = "material-icons mdc-button__icon";
-
-		dislikeButton.querySelector(".mdc-button__label").innerText = "Loading...";
-
-		const parent = document.querySelector('#top-level-buttons-computed').children[1].querySelector("a");
-		parent.innerHTML = "";
-		parent.append(dislikeButton);
-
-		dislikeButton.disabled = true;
-
-		console.log(`Fetching dislike count of video ${id}`);
-
-		const xhttp = new XMLHttpRequest();
-		xhttp.onload = function () {
-			const response = JSON.parse(this.responseText);
-			if (response.status === 200) {
-				const xhttp = new XMLHttpRequest();
-				xhttp.onload = function () {
-					try {
-						const dislikeData = JSON.parse(this.responseText);
-						dislikeButton.querySelector("p").innerText = dislikeData.display;
-					}catch (err) {
-						dislikeButton.querySelector("p").innerText = "Failed to load.";
-					}
-				}
-				xhttp.open("GET", response.url);
-				xhttp.send();
-			} else {
-				dislikeButton.querySelector("p").innerText = "Failed to load.";
-			}
-		}
-		xhttp.open("GET", `https://let-me-dislike-server.herokuapp.com/dislikes?id=${id}`);
-		xhttp.send();
+		check();
 	});
+
+	let previousLocation = window.location.href;
+	setInterval(() => {
+		if(previousLocation !== window.location.href) {
+			previousLocation = window.location.href;
+			// location has changed, check for dislikes again.
+			setTimeout(check, 1000);
+		}
+	}, 100);
+
+	function check() {
+		// making sure the page has completed loading.
+		if (document.querySelector('#top-level-buttons-computed') === null) {
+			// retry until the page has completed loading.
+			setTimeout(check, 100);
+		} else {
+			// here we can run our code. (fetching the dislikes)
+			const dislikeButton = document.createElement("button");
+			dislikeButton.append(document.createElement("span"));
+			dislikeButton.append(document.createElement("i"));
+			dislikeButton.append(document.createElement("p"));
+
+			dislikeButton.querySelector("i").innerText = "thumb_down";
+
+			dislikeButton.className = "mdc-button";
+			dislikeButton.querySelector("span").className = "mdc-button__ripple";
+			dislikeButton.querySelector("p").className = "mdc-button__label";
+			dislikeButton.querySelector("i").className = "material-icons mdc-button__icon";
+
+			dislikeButton.querySelector(".mdc-button__label").innerText = "Loading...";
+
+			const parent = document.querySelector('#top-level-buttons-computed').children[1].querySelector("a");
+			parent.innerHTML = "";
+			parent.append(dislikeButton);
+
+			dislikeButton.disabled = true;
+
+			console.log(`Fetching dislike count of video ${id}`);
+
+			fetch(`https://let-me-dislike-server.herokuapp.com/dislikes?id=${id}`).then(response => response.json()).then((response) => {
+				if (response.status === 200) {
+					fetch(response.url).then(response => response.json()).then((response) => {
+						try {
+							const dislikeData = JSON.parse(this.responseText);
+							dislikeButton.querySelector("p").innerText = dislikeData.display;
+						} catch (err) {
+							dislikeButton.querySelector("p").innerText = "Failed to load.";
+						}
+					}).catch((err) => {
+						console.error(err);
+						dislikeButton.querySelector("p").innerText = "Failed to load.";
+					});
+				} else {
+					dislikeButton.querySelector("p").innerText = "Failed to load.";
+				}
+			}).catch((err) => {
+				console.error(err);
+				dislikeButton.querySelector("p").innerText = "Failed to load.";
+			});
+		}
+	}
 }
