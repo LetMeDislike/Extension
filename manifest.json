@@ -1,6 +1,6 @@
 {
   "name": "LetMeDislike",
-  "version": "0.0.2g",
+  "version": "0.0.2",
   "manifest_version": 3,
   "description": "This extension was made in response to the change YouTube made: Removing the public dislike count.",
   "homepage_url": "https://github.com/LetMeDislike",
